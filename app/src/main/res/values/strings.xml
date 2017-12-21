@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Eventer</string>
+    <string name="add_map">Open map</string>
+    <string name="remove_map">Remove map</string>
+</resources>
