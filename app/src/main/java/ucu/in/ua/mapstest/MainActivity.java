@@ -50,6 +50,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         switch (v.getId()) {
             case R.id.btn_map:
                if(MapBtn) {
+                   mFragmentTransaction.remove(mFragment);
                    mFragmentTransaction.add(R.id.map_fragment, fragMap);
                    fragMap.getMapAsync(this);
                    mButtonMap = (Button) findViewById(R.id.btn_map);
@@ -59,6 +60,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                    break;
                } else {
                    mFragmentTransaction.remove(fragMap);
+                   mFragmentTransaction.add(R.id.map_fragment, mFragment);
                    mButtonMap = (Button) findViewById(R.id.btn_map);
                    mButtonMap.setText(R.string.add_map);
                    MapBtn = !MapBtn;
@@ -78,5 +80,16 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         Log.v(TAG,"I created marker");
         map.addMarker(new MarkerOptions().position(Lviv).title("Lviv"));
 
+    }
+
+    @Override
+    protected void onPause() {
+        mFragmentTransaction = getFragmentManager().beginTransaction();
+        if(!MapBtn) {
+            mFragmentTransaction.remove(fragMap);
+        }
+        Log.v(TAG,"Paused");
+        mFragmentTransaction.commit();
+        super.onPause();
     }
 }
