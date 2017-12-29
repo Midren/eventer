@@ -97,14 +97,14 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             e.printStackTrace();
         }
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(position,13));
-        addEventMarker(new Event(1,"Виставкa \"Скарби династії Цін\"",new Date(0),"Палаццо Бандінеллі, пл. Ринок 2","Some description ---"),map);
-        addEventMarker(new Event(2,"Виставка \"Сучасне польське мистецтво\"",new Date(0),"Музей скульптури І. Г. Пінзеля, пл. Митна, 2","Some description ---"),map);
-        addEventMarker(new Event(3,"Репертуар Театру Лесі на грудень",new Date(0),"Театр імені Лесі Українки, вул. Городоцька, 36","Some description ---"),map);
-        addEventMarker(new Event(4,"Репертуар Львівського театру ляльок на грудень",new Date(0),"Львівський театр ляльок, площа Данила Галицького, 1","Some description ---"),map);
-        addEventMarker(new Event(6,"Фестиваль \"Святкуємо особливе Різдво у Львові\"",new Date(0),"Львів, площа Ринок, площа перед Львівською оперою","Some description ---"),map);
+        addEventMarker(new Event(1,"Виставкa \"Скарби династії Цін\"",new Date(151449840L*10000),"Палаццо Бандінеллі, пл. Ринок 2","Some description ---"),map);
+        addEventMarker(new Event(2,"Виставка \"Сучасне польське мистецтво\"",new Date(151449840L*10000),"Музей скульптури І. Г. Пінзеля, пл. Митна, 2","Some description ---"),map);
+        addEventMarker(new Event(3,"Репертуар Театру Лесі на грудень",new Date(151449840L*10000),"Театр імені Лесі Українки, вул. Городоцька, 36","Some description ---"),map);
+        addEventMarker(new Event(4,"Репертуар Львівського театру ляльок на грудень",new Date(151449840L*10000),"Львівський театр ляльок, площа Данила Галицького, 1","Some description ---"),map);
+        addEventMarker(new Event(6,"Фестиваль \"Святкуємо особливе Різдво у Львові\"",new Date(151449840L*10000),"Львів, площа Ринок, площа перед Львівською оперою","Some description ---"),map);
         addEventMarker(new Event(7,"Виставка \"Народний дереворит у художніх збірках Львова\"",new Date(0),"Музей етнографії та художнього промислу, пр. Свободи,15","Some description ---"),map);
-        addEventMarker(new Event(8,"Виставка «Археологія автострад. Розкопки під час масштабного будівництва доріг біля Кракова»",new Date(0),"Музей етнографії та художнього промислу, пр. Свободи,15","Some description ---"),map);
-        addEventMarker(new Event(9,"Палац Потоцьких — Зимова резиденція Львова",new Date(0),"Палац Потоцьких, вул. Коперника, 15","Some description ---"),map);
+        addEventMarker(new Event(8,"Виставка «Археологія автострад. Розкопки під час масштабного будівництва доріг біля Кракова»",new Date(151449840L*10000),"Музей етнографії та художнього промислу, пр. Свободи,15","Some description ---"),map);
+        addEventMarker(new Event(9,"Палац Потоцьких — Зимова резиденція Львова",new Date(151449840L*10000),"Палац Потоцьких, вул. Коперника, 15","Some description ---"),map);
 
     }
 
@@ -120,7 +120,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        map.addMarker(new MarkerOptions().position(position).title(event.getName()));
+        map.addMarker(new MarkerOptions().position(position).title(event.getName()).snippet(event.getDate().toString()));
     }
 
     @Override
