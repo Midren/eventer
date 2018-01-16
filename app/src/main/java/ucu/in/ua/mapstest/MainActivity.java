@@ -1,23 +1,30 @@
 package ucu.in.ua.mapstest;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,10 +32,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
-public class MainActivity extends FragmentActivity implements View.OnClickListener, OnMapReadyCallback{
+public class MainActivity extends FragmentActivity implements View.OnClickListener, OnMapReadyCallback, GoogleMap.OnMarkerClickListener{
     MapFragment fragMap;
     Fragment mFragment;
     Button mButtonMap;
@@ -87,40 +95,28 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     @Override
     public void onMapReady(GoogleMap map) {
         LatLng position = Lviv;
-        getLocation mGetLocation = new getLocation();
-        mGetLocation.execute("Львів");
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(position,13));
+        GetMarkers getMarkers = new GetMarkers();
+        getMarkers.execute();
+        ArrayList<Event> events = new ArrayList<Event>();
         try {
-            position = mGetLocation.get();
+            events = getMarkers.get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(position,13));
-        addEventMarker(new Event(1,"Виставкa \"Скарби династії Цін\"",new Date(151449840L*10000),"Палаццо Бандінеллі, пл. Ринок 2","Some description ---"),map);
-        addEventMarker(new Event(2,"Виставка \"Сучасне польське мистецтво\"",new Date(151449840L*10000),"Музей скульптури І. Г. Пінзеля, пл. Митна, 2","Some description ---"),map);
-        addEventMarker(new Event(3,"Репертуар Театру Лесі на грудень",new Date(151449840L*10000),"Театр імені Лесі Українки, вул. Городоцька, 36","Some description ---"),map);
-        addEventMarker(new Event(4,"Репертуар Львівського театру ляльок на грудень",new Date(151449840L*10000),"Львівський театр ляльок, площа Данила Галицького, 1","Some description ---"),map);
-        addEventMarker(new Event(6,"Фестиваль \"Святкуємо особливе Різдво у Львові\"",new Date(151449840L*10000),"Львів, площа Ринок, площа перед Львівською оперою","Some description ---"),map);
-        addEventMarker(new Event(7,"Виставка \"Народний дереворит у художніх збірках Львова\"",new Date(0),"Музей етнографії та художнього промислу, пр. Свободи,15","Some description ---"),map);
-        addEventMarker(new Event(8,"Виставка «Археологія автострад. Розкопки під час масштабного будівництва доріг біля Кракова»",new Date(151449840L*10000),"Музей етнографії та художнього промислу, пр. Свободи,15","Some description ---"),map);
-        addEventMarker(new Event(9,"Палац Потоцьких — Зимова резиденція Львова",new Date(151449840L*10000),"Палац Потоцьких, вул. Коперника, 15","Some description ---"),map);
-
+        for (Event event: events) {
+            addEventMarker(event, map);
+        }
     }
 
     public void addEventMarker(Event event,GoogleMap map) {
-        Log.v(TAG,"I created marker");
-        LatLng position = Lviv;
-        getLocation mGetLocation = new getLocation();
-        mGetLocation.execute(event.getPlace());
-        try {
-            position = mGetLocation.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        map.addMarker(new MarkerOptions().position(position).title(event.getName()).snippet(event.getDate().toString()));
+        Marker marker = map.addMarker(new MarkerOptions()
+                .position(new LatLng(event.getPlace_lat(),event.getPlace_lng()))
+                .title(event.getName()));
+        marker.setTag(event.getId());
+        map.setOnMarkerClickListener(this);
     }
 
     @Override
@@ -134,45 +130,50 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         super.onPause();
     }
 
-    class getLocation extends AsyncTask<String,Void,LatLng> {
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        Integer event_id = (Integer) marker.getTag();
+        Bundle bundle = new Bundle();
+        bundle.putInt("Id",event_id);
+        DialogFragment eventDialog = new EventDialog();
+        eventDialog.setArguments(bundle);
+        eventDialog.show(getFragmentManager(), "EventDialog");
+        return true;
+    }
+
+    class GetMarkers extends AsyncTask<Void,Void,ArrayList<Event>>{
 
         @Override
-        protected LatLng doInBackground(String... sites) {
-            double lng = 0, lat = 0;
-            for (String site: sites) {
-                Log.v(TAG,"Start async");
-                String json = "";
-                for (int i = 0; i < site.length(); i++) {
-                    if(site.charAt(i) == ' '){
-                        site = site.replace(' ','+');
-                    }
+        protected ArrayList<Event> doInBackground(Void... voids) {
+            Log.v(TAG,"Start async");
+            String json = "";
+            try {
+                URL url = new URL("http://382809ce.ngrok.io/get_events_short");
+                Log.v(TAG,"try to connect");
+                Scanner sc = new Scanner(url.openConnection().getInputStream());
+                Log.v(TAG,"connected");
+                while(sc.hasNextLine()) {
+                    json += sc.nextLine() + '\n';
                 }
-                try {
-                    URL url = new URL("https://maps.googleapis.com/maps/api/geocode/json?address=");
-                    String key = "&key=AIzaSyAuurSdVgrVBkMnDG7Z4Dur0TT5ZRY44-k";
-                    url = new URL(url.toString()+site+key);
-                    Log.v(TAG,"try to connect");
-                    Scanner sc = new Scanner(url.openConnection().getInputStream());
-                    Log.v(TAG,"connected");
-                    while(sc.hasNextLine()) {
-                        json += sc.nextLine() + '\n';
-                    }
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                JSONObject place = null;
-                try {
-                    place = new JSONObject(json);
-                    lng = place.getJSONArray("results").optJSONObject(0).getJSONObject("geometry").getJSONObject("location").getDouble("lng");
-                    lat = place.getJSONArray("results").optJSONObject(0).getJSONObject("geometry").getJSONObject("location").getDouble("lat");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            return new LatLng(lat,lng);
+            ArrayList<Event> events = new ArrayList<Event>();
+            try {
+                JSONArray json_events = new JSONObject(json).getJSONArray("events");
+                for(int i = 0; i < json_events.length(); i++) {
+                    JSONObject event = json_events.optJSONObject(i);
+                    events.add(new Event(event.getInt("id"),event.getString("name"),event.getDouble("latitude"),event.getDouble("longitude")));
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return events;
         }
+
     }
 }
 
