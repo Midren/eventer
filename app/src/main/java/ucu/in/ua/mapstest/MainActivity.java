@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.app.VoiceInteractor;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,6 +14,11 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
@@ -28,13 +34,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener, OnMapReadyCallback, GoogleMap.OnMarkerClickListener{
     MapFragment fragMap;
@@ -96,19 +95,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public void onMapReady(GoogleMap map) {
         LatLng position = Lviv;
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(position,13));
-        GetMarkers getMarkers = new GetMarkers();
-        getMarkers.execute();
-        ArrayList<Event> events = new ArrayList<Event>();
-        try {
-            events = getMarkers.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        for (Event event: events) {
-            addEventMarker(event, map);
-        }
+        addMarkers(map);
     }
 
     public void addEventMarker(Event event,GoogleMap map) {
@@ -141,39 +128,33 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         return true;
     }
 
-    class GetMarkers extends AsyncTask<Void,Void,ArrayList<Event>>{
-
-        @Override
-        protected ArrayList<Event> doInBackground(Void... voids) {
-            Log.v(TAG,"Start async");
-            String json = "";
-            try {
-                URL url = new URL("http://382809ce.ngrok.io/get_events_short");
-                Log.v(TAG,"try to connect");
-                Scanner sc = new Scanner(url.openConnection().getInputStream());
+    public void addMarkers(final GoogleMap map) {
+        String url = "http://b8b446f8.ngrok.io/get_events_short";
+        Log.v(TAG,"try to connect");
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
                 Log.v(TAG,"connected");
-                while(sc.hasNextLine()) {
-                    json += sc.nextLine() + '\n';
+                JSONArray json_events = null;
+                try {
+                    json_events = response.getJSONArray("events");
+                    for(int i = 0; i < json_events.length(); i++) {
+                        JSONObject event = json_events.optJSONObject(i);
+                        addEventMarker(new Event(event.getInt("id"),event.getString("name"),event.getDouble("latitude"),event.getDouble("longitude")),map);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
-            ArrayList<Event> events = new ArrayList<Event>();
-            try {
-                JSONArray json_events = new JSONObject(json).getJSONArray("events");
-                for(int i = 0; i < json_events.length(); i++) {
-                    JSONObject event = json_events.optJSONObject(i);
-                    events.add(new Event(event.getInt("id"),event.getString("name"),event.getDouble("latitude"),event.getDouble("longitude")));
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //TODO Auto-generated method
             }
-            return events;
-        }
-
+        });
+        Volley.newRequestQueue(this).add(jsonRequest);
     }
+
+
 }
 
