@@ -48,7 +48,7 @@
             android:gravity="center"
             android:id="@+id/e_desc"/>
         <ProgressBar
-            android:id="@+id/progressBar2"
+            android:id="@+id/progressBar"
             style="?android:attr/progressBarStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
