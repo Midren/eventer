@@ -41,7 +41,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        //ТУТ мій пробний коментар
         mFragmentTransaction = getFragmentManager().beginTransaction();
         mFragment = new Fragment1();
         mFragmentTransaction.add(R.id.map_fragment, mFragment);
