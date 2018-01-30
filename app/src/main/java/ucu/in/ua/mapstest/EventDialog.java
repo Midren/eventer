@@ -27,6 +27,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
+
+/**
+ * Created by ahdrew on 25.01.18.
+ */
+
 public class EventDialog extends DialogFragment {
     TextView name;
     TextView desc;
@@ -62,7 +67,7 @@ public class EventDialog extends DialogFragment {
     }
 
     public Event getEvent(final Integer id, final View v, final Context context) {
-        String url = "http://36e25c92.ngrok.io/get_event_full/" + id.toString();
+        String url = "http://56ab65a1.ngrok.io/get_event_full/" + id.toString();
         Log.v(TAG,"try to connect");
         final Event[] event = new Event[1];
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {

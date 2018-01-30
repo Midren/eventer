@@ -1,6 +1,8 @@
 package ucu.in.ua.mapstest;
 
-import java.sql.Date;
+/**
+ * Created by ahdrew on 25.01.18.
+ */
 
 public class Event {
     private int id;
@@ -57,7 +59,7 @@ public class Event {
         return picture_uri;
     }
 
-    public Event(int id, String name, double place_lat, double place_lng){
+    public Event(int id, String name, double place_lat, double place_lng) {
         super();
         this.id = id;
         this.name = name;
@@ -66,7 +68,7 @@ public class Event {
         this.place_lng = place_lng;
     }
 
-    public Event(int id, String name, String description, int attending_count,String start_time, String ticket_uri, String place_name, String picture) {
+    public Event(int id, String name, String description, int attending_count, String start_time, String ticket_uri, String place_name, String picture) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -74,6 +76,13 @@ public class Event {
         this.start_time = start_time;
         this.ticket_uri = ticket_uri;
         this.place_name = place_name;
+        this.picture_uri = picture;
+    }
+
+    public Event(int id, String name, String start_time, String picture) {
+        this.id = id;
+        this.name = name;
+        this.start_time = start_time;
         this.picture_uri = picture;
     }
 }
