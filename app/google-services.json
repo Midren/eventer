@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "139382846751",
+    "project_id": "maptests-1513783279114"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:139382846751:android:9aa8e7f9b3b31f83",
+        "android_client_info": {
+          "package_name": "ucu.in.ua.mapstest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "139382846751-8oqjjggbp39osc7m3ca2l5tkurlsgovv.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "139382846751-bscefi0v84b7pl1j2n5ei596vprogndv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ucu.in.ua.mapstest",
+            "certificate_hash": "e51ad40c7d09cb49c73088ef9d59199173944abe"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDiGng2FsL_x4UtTrzj7SJQCL2ztYlbFsk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

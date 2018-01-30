@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity
     private Fragment mFragmentStart;
     private Fragment mFragmentSettings;
     private Fragment mFragmentEvent;
+    private Fragment mFragmentProfile;
     FragmentTransaction mFragmentTransaction;
     Boolean MapBtn = true;
 
@@ -89,6 +90,7 @@ public class MainActivity extends AppCompatActivity
         mFragmentStart = new FragmentStart();
         mFragmentEvent = new FragmentEvent();
         mFragmentSettings = new FragmentSettings();
+        mFragmentProfile = new FragmentProfile();
         //ТУТ мій пробний коментар
         mFragmentTransaction = getFragmentManager().beginTransaction();
         mFragmentTransaction.add(R.id.container, mFragmentStart);
@@ -155,8 +157,8 @@ public class MainActivity extends AppCompatActivity
                 fragmentTransaction.replace(R.id.container, mFragmentEvent);
                 break;
             case R.id.nav_profile:
-
-                Toast.makeText(getApplicationContext(), "Profile PRESS", Toast.LENGTH_LONG).show();
+                Log.v(TAG,"profile ");
+                fragmentTransaction.replace(R.id.container, mFragmentProfile);
                 break;
         }
         Log.v(TAG, "tranz done");
