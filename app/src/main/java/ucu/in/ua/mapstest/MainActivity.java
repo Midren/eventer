@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+<<<<<<< HEAD
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity
         mFragmentStart = new FragmentStart();
         mFragmentEvent = new FragmentEvent();
         mFragmentSettings = new FragmentSettings();
+        //ТУТ мій пробний коментар
         mFragmentTransaction = getFragmentManager().beginTransaction();
         mFragmentTransaction.add(R.id.container, mFragmentStart);
         mFragmentTransaction.commit();
