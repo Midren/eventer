@@ -1,7 +1,6 @@
 package ucu.in.ua.mapstest;
 
 
-import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
@@ -35,7 +34,7 @@ public class FragmentEvent extends Fragment {
         //завантаження подій
         Log.v("MAPTEST", "go1");
 
-        String url = "http://56ab65a1.ngrok.io/get_events_menu";
+        String url = "https://dc49c5ec.ngrok.io/get_events_menu";
         final List<Event> temp = new ArrayList<Event>();
 
         Log.v("MAPTEST", "go2");

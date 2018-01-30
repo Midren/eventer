@@ -41,14 +41,20 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     //Defining Variables
-    private Toolbar toolbar;
-    private NavigationView navigationView;
-    private DrawerLayout drawerLayout;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.nav_view)
+    NavigationView navigationView;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout drawerLayout;
     //Defining Fragments
     private MapFragment mFragmentMap;
     private Fragment mFragmentStart;
@@ -56,6 +62,7 @@ public class MainActivity extends AppCompatActivity
     private Fragment mFragmentEvent;
     FragmentTransaction mFragmentTransaction;
     Boolean MapBtn = true;
+
 
     public static final LatLng Lviv = new LatLng(49.85, 24.0166666667);
     public static final String TAG = "MAPTESTS";
@@ -65,26 +72,15 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ButterKnife.bind(this);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
 
@@ -180,7 +176,7 @@ public class MainActivity extends AppCompatActivity
         DialogFragment eventDialog = new EventDialog();
         eventDialog.setArguments(bundle);
         eventDialog.show(getFragmentManager(), "EventDialog");
-        return false;
+        return true;
     }
 
     @Override
@@ -193,7 +189,7 @@ public class MainActivity extends AppCompatActivity
 
     //Created by us
     public void addMarkers(final GoogleMap map) {
-        String url = "http://56ab65a1.ngrok.io/get_events_short";
+        String url = "https://dc49c5ec.ngrok.io/get_events_short";
         Log.v(TAG, "try to connect1");
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override

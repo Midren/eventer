@@ -26,6 +26,9 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 
 /**
@@ -33,13 +36,21 @@ import org.json.JSONObject;
  */
 
 public class EventDialog extends DialogFragment {
+    @BindView(R.id.e_name)
     TextView name;
+    @BindView(R.id.e_desc)
     TextView desc;
+    @BindView(R.id.e_ticket_uri)
     TextView ticket_uri;
+    @BindView(R.id.e_start_time)
     TextView start_time;
+    @BindView(R.id.e_place_name)
     TextView place_name;
+    @BindView(R.id.e_picture)
     ImageView picture;
+    @BindView(R.id.progressBar)
     ProgressBar mProgressBar;
+    private Unbinder unbinder;
 
     public static final String TAG = "MAPTESTS";
 
@@ -50,12 +61,8 @@ public class EventDialog extends DialogFragment {
         View v = inflater.inflate(R.layout.event_dialog,null);
         Integer event_id = getArguments().getInt("Id");
         getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        name = (TextView)v.findViewById(R.id.e_name);
-        desc = (TextView)v.findViewById(R.id.e_desc);
-        ticket_uri = (TextView)v.findViewById(R.id.e_ticket_uri);
-        place_name = (TextView)v.findViewById(R.id.e_place_name);
-        start_time = (TextView)v.findViewById(R.id.e_start_time);
-        picture = (ImageView)v.findViewById(R.id.e_picture);
+        unbinder = ButterKnife.bind(this, v);
+
         name.setVisibility(View.GONE);
         desc.setVisibility(View.GONE);
         ticket_uri.setVisibility(View.GONE);
@@ -67,7 +74,7 @@ public class EventDialog extends DialogFragment {
     }
 
     public Event getEvent(final Integer id, final View v, final Context context) {
-        String url = "http://56ab65a1.ngrok.io/get_event_full/" + id.toString();
+        String url = "https://dc49c5ec.ngrok.io/get_event_full/" + id.toString();
         Log.v(TAG,"try to connect");
         final Event[] event = new Event[1];
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
@@ -86,7 +93,6 @@ public class EventDialog extends DialogFragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                mProgressBar = (ProgressBar)v.findViewById(R.id.progressBar);
                 mProgressBar.setVisibility(View.GONE);
 
                 name.setVisibility(View.VISIBLE);
@@ -113,5 +119,11 @@ public class EventDialog extends DialogFragment {
         });
         Volley.newRequestQueue(getActivity().getApplicationContext()).add(jsonRequest);
         return event[0];
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 }
