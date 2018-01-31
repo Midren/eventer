@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.LinkAddress;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,10 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.squareup.picasso.Picasso;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 /**
  * Created by momka45 on 31.01.18.
  */
@@ -40,6 +45,7 @@ public class FragmentProfile extends Fragment implements View.OnClickListener{
     TextView acntName;
     TextView acntEmail;
     LinearLayout acntInfo;
+
 
     @Nullable
     @Override
@@ -65,6 +71,7 @@ public class FragmentProfile extends Fragment implements View.OnClickListener{
         updateUI(account);
         return v;
     }
+
 
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
@@ -115,15 +122,28 @@ public class FragmentProfile extends Fragment implements View.OnClickListener{
 
     private void updateUI(GoogleSignInAccount account) {
 
+        NavigationView navigationView = getActivity().findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+        TextView navUsername = (TextView) headerView.findViewById(R.id.username_text);
+        TextView navEmail = (TextView) headerView.findViewById(R.id.email_text);
+        ImageView navPicture = (ImageView) headerView.findViewById(R.id.nav_picture);
         if (account != null) {
+            navUsername.setText(account.getDisplayName());
+            navEmail.setText(account.getEmail());
+            Picasso.with(navPicture.getContext()).load(account.getPhotoUrl()).transform(new BorderedCircleTransformation()).into(navPicture);
+
             acntInfo.setVisibility(View.VISIBLE);
             sgnInBtn.setVisibility(View.GONE);
             sgnOutBtn.setVisibility(View.VISIBLE);
             acntName.setText(account.getDisplayName());
             acntEmail.setText(account.getEmail());
-            Picasso.with(acntImgView.getContext()).load(account.getPhotoUrl()).into(acntImgView);
+            Picasso.with(acntImgView.getContext()).load(account.getPhotoUrl()).transform(new BorderedCircleTransformation()).into(acntImgView);
         }
         else {
+            navUsername.setText("Eventer");
+            navEmail.setText("");
+            Picasso.with(navPicture.getContext()).load(R.mipmap.ic_launcher_round).into(navPicture);
+
             acntInfo.setVisibility(View.GONE);
             sgnInBtn.setVisibility(View.VISIBLE);
             sgnOutBtn.setVisibility(View.GONE);
